@@ -629,6 +629,28 @@ function wc_get_customer_available_downloads( $customer_id ) {
 				continue;
 			}
 
+			// Check of partially refunded items.
+			// <Partial-refund-check />.
+
+			// Fetch items which are allowed to be downloaded for an order.
+			// This excludes the items which have been partially refunded.
+			$order_downloads = $order->get_downloadable_items();
+			$product_found   = false;
+
+			// Check if the product id is present in the allowed list of items.
+			foreach ( $order_downloads as $download_item ) {
+				if ( $download_item['product_id'] == $result->product_id ) {
+					$product_found = true;
+					break;
+				}
+			}
+
+			if ( ! $product_found ) {
+				continue;
+			}
+
+			// </partial-refund-check>.
+
 			// Check if downloads are permitted.
 			if ( ! $order->is_download_permitted() ) {
 				continue;
