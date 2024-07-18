@@ -401,19 +401,15 @@ class WC_Tests_Customer_Functions extends WC_Unit_Test_Case {
 		$product->set_downloads( array( $prod_download ) );
 		$product->save();
 
-		$cust_download = new WC_Customer_Download();
-		$cust_download->set_user_id( $customer_id );
-		$cust_download->set_product_id( $product->get_id() );
-		$cust_download->set_download_id( $prod_download->get_id() );
-		$cust_download->save();
-
 		$order = new WC_Order();
 		$order->set_customer_id( $customer_id );
+		$item = new WC_Order_Item_Product();
+		$item->set_product( $product );
+		$item->set_order_id( $order->get_id() );
+		$item->save();
+		$order->add_item( $item );
 		$order->set_status( 'completed' );
 		$order->save();
-
-		$cust_download->set_order_id( $order->get_id() );
-		$cust_download->save();
 
 		$downloads = wc_get_customer_available_downloads( $customer_id );
 		$this->assertEquals( 1, count( $downloads ) );
