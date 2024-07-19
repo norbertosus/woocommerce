@@ -639,7 +639,7 @@ function wc_get_customer_available_downloads( $customer_id ) {
 
 			// Check if the product id is present in the allowed list of items.
 			foreach ( $order_downloads as $download_item ) {
-				if ( $download_item['product_id'] === $result->product_id ) {
+				if ( $download_item['product_id'] === (int) $result->product_id ) {
 					$product_found = true;
 					break;
 				}
