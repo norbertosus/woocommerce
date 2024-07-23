@@ -600,6 +600,47 @@ function wc_get_customer_download_permissions( $customer_id ) {
 }
 
 /**
+ * Function to check if the product is part of order
+ *
+ * @param int      $product_id Product ID.
+ * @param WC_Order $order Order object.
+ *
+ * @return bool
+ */
+function is_product_part_of_order( $product_id, $order ) {
+	$items = $order->get_items();
+
+	foreach ( $items as $item ) {
+		if ( $product_id === $item->get_product_id() ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Function to check if the product is allowed to be downloaded if it is part of the order.
+ *
+ * @param int      $product_id Product ID.
+ * @param WC_Order $order Order object.
+ *
+ * @return bool
+ */
+function is_product_allowed_to_be_downloaded( $product_id, $order ) {
+	$order_downloads = $order->get_downloadable_items();
+
+	// Check if the product id is present in the allowed list of items.
+	foreach ( $order_downloads as $download_item ) {
+		if ( $product_id === $download_item['product_id'] ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Get customer available downloads.
  *
  * @param int $customer_id Customer/User ID.
@@ -629,28 +670,6 @@ function wc_get_customer_available_downloads( $customer_id ) {
 				continue;
 			}
 
-			// Check of partially refunded items.
-			// <Partial-refund-check />.
-
-			// Fetch items which are allowed to be downloaded for an order.
-			// This excludes the items which have been partially refunded.
-			$order_downloads = $order->get_downloadable_items();
-			$product_found   = false;
-
-			// Check if the product id is present in the allowed list of items.
-			foreach ( $order_downloads as $download_item ) {
-				if ( $download_item['product_id'] === (int) $result->product_id ) {
-					$product_found = true;
-					break;
-				}
-			}
-
-			if ( ! $product_found ) {
-				continue;
-			}
-
-			// </partial-refund-check>.
-
 			// Check if downloads are permitted.
 			if ( ! $order->is_download_permitted() ) {
 				continue;
@@ -673,6 +692,12 @@ function wc_get_customer_available_downloads( $customer_id ) {
 
 			// If the downloadable file has been disabled (it may be located in an untrusted location) then do not return it.
 			if ( ! $download_file->get_enabled() ) {
+				continue;
+			}
+
+			// check if the download is part of the order and has a associated product.
+			// and if the product is partially refunded, then skip this product from the download list.
+			if ( is_product_part_of_order( $product_id, $order ) && ! is_product_allowed_to_be_downloaded( $product_id, $order ) ) {
 				continue;
 			}
 
