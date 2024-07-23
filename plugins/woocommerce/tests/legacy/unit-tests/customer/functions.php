@@ -425,9 +425,9 @@ class WC_Tests_Customer_Functions extends WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test wc_get_customer_available_downloads.
+	 * Test test_wc_get_customer_available_downloads_for_partial_refunds.
 	 *
-	 * @since 3.1
+	 * @since 9.3
 	 */
 	public function test_wc_get_customer_available_downloads_for_partial_refunds() {
 		$customer_id = wc_create_new_customer( 'test@example.com', 'testuser', 'testpassword' );
