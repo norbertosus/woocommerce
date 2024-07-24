@@ -1202,3 +1202,44 @@ function wc_delete_order_note( $note_id ) {
 
 	return false;
 }
+
+/**
+ * Function to check if the product is part of order
+ *
+ * @param int      $product_id Product ID.
+ * @param WC_Order $order Order object.
+ *
+ * @return bool
+ */
+function wc_is_product_part_of_order( int $product_id, WC_Order $order ): bool {
+	$items = $order->get_items();
+
+	foreach ( $items as $item ) {
+		if ( $product_id === $item->get_product_id() ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Function to check if the product is allowed to be downloaded if it is part of the order.
+ *
+ * @param int      $product_id Product ID.
+ * @param WC_Order $order Order object.
+ *
+ * @return bool
+ */
+function wc_is_product_allowed_to_be_downloaded( int $product_id, WC_Order $order ): bool {
+	$order_downloads = $order->get_downloadable_items();
+
+	// Check if the product id is present in the allowed list of items.
+	foreach ( $order_downloads as $download_item ) {
+		if ( $product_id === $download_item['product_id'] ) {
+			return true;
+		}
+	}
+
+	return false;
+}

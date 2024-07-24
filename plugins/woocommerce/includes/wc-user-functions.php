@@ -570,17 +570,17 @@ function wc_modify_map_meta_cap( $caps, $cap, $user_id, $args ) {
 				break;
 			} else {
 				if ( ! wc_current_user_has_role( 'administrator' ) ) {
-					if ( wc_user_has_role( $args[0], 'administrator' ) ) {
+				if ( wc_user_has_role( $args[0], 'administrator' ) ) {
+					$caps[] = 'do_not_allow';
+				} elseif ( wc_current_user_has_role( 'shop_manager' ) ) {
+					// Shop managers can only edit customer info.
+					$userdata                    = get_userdata( $args[0] );
+					$shop_manager_editable_roles = apply_filters( 'woocommerce_shop_manager_editable_roles', array( 'customer' ) );
+					if ( property_exists( $userdata, 'roles' ) && ! empty( $userdata->roles ) && ! array_intersect( $userdata->roles, $shop_manager_editable_roles ) ) {
 						$caps[] = 'do_not_allow';
-					} elseif ( wc_current_user_has_role( 'shop_manager' ) ) {
-						// Shop managers can only edit customer info.
-						$userdata                    = get_userdata( $args[0] );
-						$shop_manager_editable_roles = apply_filters( 'woocommerce_shop_manager_editable_roles', array( 'customer' ) );
-						if ( property_exists( $userdata, 'roles' ) && ! empty( $userdata->roles ) && ! array_intersect( $userdata->roles, $shop_manager_editable_roles ) ) {
-							$caps[] = 'do_not_allow';
-						}
 					}
 				}
+			}
 			}
 			break;
 	}
@@ -597,47 +597,6 @@ add_filter( 'map_meta_cap', 'wc_modify_map_meta_cap', 10, 4 );
 function wc_get_customer_download_permissions( $customer_id ) {
 	$data_store = WC_Data_Store::load( 'customer-download' );
 	return apply_filters( 'woocommerce_permission_list', $data_store->get_downloads_for_customer( $customer_id ), $customer_id );
-}
-
-/**
- * Function to check if the product is part of order
- *
- * @param int      $product_id Product ID.
- * @param WC_Order $order Order object.
- *
- * @return bool
- */
-function is_product_part_of_order( $product_id, $order ) {
-	$items = $order->get_items();
-
-	foreach ( $items as $item ) {
-		if ( $product_id === $item->get_product_id() ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Function to check if the product is allowed to be downloaded if it is part of the order.
- *
- * @param int      $product_id Product ID.
- * @param WC_Order $order Order object.
- *
- * @return bool
- */
-function is_product_allowed_to_be_downloaded( $product_id, $order ) {
-	$order_downloads = $order->get_downloadable_items();
-
-	// Check if the product id is present in the allowed list of items.
-	foreach ( $order_downloads as $download_item ) {
-		if ( $product_id === $download_item['product_id'] ) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /**
@@ -697,7 +656,7 @@ function wc_get_customer_available_downloads( $customer_id ) {
 
 			// check if the download is part of the order and has a associated product.
 			// and if the product is partially refunded, then skip this product from the download list.
-			if ( is_product_part_of_order( $product_id, $order ) && ! is_product_allowed_to_be_downloaded( $product_id, $order ) ) {
+			if ( wc_is_product_part_of_order( $product_id, $order ) && ! wc_is_product_allowed_to_be_downloaded( $product_id, $order ) ) {
 				continue;
 			}
 
