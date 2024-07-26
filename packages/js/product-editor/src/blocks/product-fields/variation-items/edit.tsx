@@ -102,7 +102,7 @@ export function Edit( {
 	} = useUserPreferences();
 
 	const { ref: variationTableRef } = useValidation< Product >(
-		`variations`,
+		clientId,
 		async function regularPriceValidator( defaultValue, newData ) {
 			/**
 			 * We cause a validation error if there is:
@@ -131,7 +131,6 @@ export function Edit( {
 						'Set variation prices before adding this product.',
 						'woocommerce'
 					),
-					context: clientId,
 				};
 			}
 		},

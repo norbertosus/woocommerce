@@ -80,12 +80,11 @@ export function NameBlockEdit( {
 		error: nameValidationError,
 		validate: validateName,
 	} = useValidation< Product >(
-		'name',
+		clientId,
 		async function nameValidator() {
 			if ( ! name || name === AUTO_DRAFT_NAME ) {
 				return {
 					message: __( 'Product name is required.', 'woocommerce' ),
-					context: clientId,
 				};
 			}
 
@@ -95,7 +94,6 @@ export function NameBlockEdit( {
 						'Please enter a product name shorter than 120 characters.',
 						'woocommerce'
 					),
-					context: clientId,
 				};
 			}
 		},

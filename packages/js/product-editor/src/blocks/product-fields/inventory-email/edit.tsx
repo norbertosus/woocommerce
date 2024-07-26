@@ -49,7 +49,7 @@ export function Edit( {
 		error: lowStockAmountValidationError,
 		validate: validateLowStockAmount,
 	} = useValidation< Product >(
-		`low_stock_amount-${ clientId }`,
+		clientId,
 		async function stockQuantityValidator() {
 			if ( lowStockAmount && lowStockAmount < 0 ) {
 				return {
@@ -57,7 +57,6 @@ export function Edit( {
 						'This field must be a positive number.',
 						'woocommerce'
 					),
-					context: clientId,
 				};
 			}
 		},

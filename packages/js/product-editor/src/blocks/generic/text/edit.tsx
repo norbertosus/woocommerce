@@ -52,7 +52,7 @@ export function Edit( {
 	const inputRef = useRef< HTMLInputElement >( null );
 
 	const { error, validate } = useValidation< Product >(
-		property,
+		clientId,
 		async function validator() {
 			if ( ! inputRef.current ) return;
 
@@ -130,7 +130,6 @@ export function Edit( {
 			if ( ! input.validity.valid ) {
 				return {
 					message: customErrorMessage,
-					context: clientId,
 				};
 			}
 		},

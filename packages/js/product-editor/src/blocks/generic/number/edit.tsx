@@ -41,7 +41,7 @@ export function Edit( {
 	const { hasEdit } = useProductEdits();
 
 	const { error, validate } = useValidation< Product >(
-		property,
+		clientId,
 		async function validator() {
 			if (
 				typeof min === 'number' &&
@@ -57,7 +57,6 @@ export function Edit( {
 						),
 						min
 					),
-					context: clientId,
 				};
 			}
 			if (
@@ -74,13 +73,11 @@ export function Edit( {
 						),
 						min
 					),
-					context: clientId,
 				};
 			}
 			if ( required && ! value ) {
 				return {
 					message: __( 'This field is required.', 'woocommerce' ),
-					context: clientId,
 				};
 			}
 		},

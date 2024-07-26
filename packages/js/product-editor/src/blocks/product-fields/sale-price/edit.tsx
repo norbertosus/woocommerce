@@ -55,7 +55,7 @@ export function Edit( {
 		error: salePriceValidationError,
 		validate: validateSalePrice,
 	} = useValidation< Product >(
-		`sale-price-${ clientId }`,
+		clientId,
 		async function salePriceValidator() {
 			if ( salePrice ) {
 				if ( Number.parseFloat( salePrice ) < 0 ) {
@@ -64,7 +64,6 @@ export function Edit( {
 							'Sale price must be greater than or equals to zero.',
 							'woocommerce'
 						),
-						context: clientId,
 					};
 				}
 				const listPrice = Number.parseFloat( regularPrice );
@@ -77,7 +76,6 @@ export function Edit( {
 							'Sale price must be lower than the regular price.',
 							'woocommerce'
 						),
-						context: clientId,
 					};
 				}
 			}
