@@ -88,7 +88,7 @@ export const useErrorHandler = (): UseErrorHandlerTypes => {
 				message: errorMessage,
 				validatorId = '',
 			} = error;
-			const errorContext = getParentTabId( context );
+			const errorContext = getParentTabId( context || validatorId );
 			switch ( code ) {
 				case 'variable_product_no_variation_prices':
 					response.message = errorMessage;

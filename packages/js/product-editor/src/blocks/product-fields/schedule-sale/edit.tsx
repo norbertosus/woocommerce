@@ -91,12 +91,14 @@ export function Edit( {
 	const _dateOnSaleFrom = moment( dateOnSaleFromGmt, moment.ISO_8601, true );
 	const _dateOnSaleTo = moment( dateOnSaleToGmt, moment.ISO_8601, true );
 
+	const dateOnSaleFromGmtId = `date_on_sale_from_gmt-${ clientId }`;
+
 	const {
 		ref: dateOnSaleFromGmtRef,
 		error: dateOnSaleFromGmtValidationError,
 		validate: validateDateOnSaleFromGmt,
 	} = useValidation< Product >(
-		`date_on_sale_from_gmt-${ clientId }`,
+		dateOnSaleFromGmtId,
 		async function dateOnSaleFromValidator() {
 			if ( showScheduleSale && dateOnSaleFromGmt ) {
 				if ( ! _dateOnSaleFrom.isValid() ) {
@@ -123,12 +125,14 @@ export function Edit( {
 		[ showScheduleSale, dateOnSaleFromGmt, _dateOnSaleFrom, _dateOnSaleTo ]
 	);
 
+	const dateOnSaleToGmtId = `date_on_sale_to_gmt-${ clientId }`;
+
 	const {
 		ref: dateOnSaleToGmtRef,
 		error: dateOnSaleToGmtValidationError,
 		validate: validateDateOnSaleToGmt,
 	} = useValidation< Product >(
-		`date_on_sale_to_gmt-${ clientId }`,
+		dateOnSaleToGmtId,
 		async function dateOnSaleToValidator() {
 			if ( showScheduleSale && dateOnSaleToGmt ) {
 				if ( ! _dateOnSaleTo.isValid() ) {
@@ -170,6 +174,7 @@ export function Edit( {
 				<div className="wp-block-columns wp-block-woocommerce-product-schedule-sale-fields__content">
 					<div className="wp-block-column">
 						<DateTimePickerControl
+							id={ dateOnSaleFromGmtId }
 							ref={
 								dateOnSaleFromGmtRef as React.Ref< HTMLInputElement >
 							}
@@ -191,6 +196,7 @@ export function Edit( {
 
 					<div className="wp-block-column">
 						<DateTimePickerControl
+							id={ dateOnSaleToGmtId }
 							ref={
 								dateOnSaleToGmtRef as React.Ref< HTMLInputElement >
 							}
